@@ -1,0 +1,22 @@
+{
+  "name": "nextbus",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.0.0-beta.42",
+    "bootstrap": "^4.1.1",
+    "d3": "^4.13.0",
+    "meteor-node-stubs": "^0.3.2",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "reactstrap": "^6.0.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-react": "^1.1.7",
+    "eslint-plugin-react": "^7.7.0"
+  }
+}
