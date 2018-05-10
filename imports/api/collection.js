@@ -22,7 +22,7 @@ if (Meteor.isServer) {
       console.log("Query search: ");
       try {
         const result = HTTP.call("GET",
-          "http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni&r=N&t=1525923010278"
+          "http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni&t=1525923010278"
         );
         Collection.insert(result.data);
       } catch (e) {

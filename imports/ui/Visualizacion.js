@@ -8,104 +8,7 @@ export default class Visualizacion extends Component {
     super(props);
     this.state = {
     };
-  }
-
-  componentDidMount () {
-    console.log("entrooooo");
-    const graph = {
-      nodes: [
-        { name: "hola", age: 35 },
-        { name: "hola1", age: 35 },
-        { name: "hola2", age: 33 },
-        { name: "hola3", age: 2 },
-        { name: "hola4", age: 25 },
-        { name: "hola5", age: 85 }
-      ],
-      links: [
-        { source: "hola", target: "hola1" },
-        { source: "hola", target: "hola2" },
-        { source: "hola", target: "hola3" },
-        { source: "hola", target: "hola4" },
-        { source: "hola", target: "hola5" },
-        { source: "hola5", target: "hola2" }
-      ]
-    };
-    var canvas = d3.select(this.canvas);
-    var width = canvas.attr("width");
-    var height = canvas.attr("height");
-    var ctx = canvas.node().getContext("2d");
-    var r = 10;
-    var color = d3.scaleOrdinal(d3.schemeCategory20);
-    var simulation = d3.forceSimulation()
-      .force("x", d3.forceX(width / 2))
-      .force("y", d3.forceY(width / 2))
-      .force("collide", d3.forceCollide(r + 1))
-      .force("charge", d3.forceManyBody(r + 1).strength(-200))
-      .on("tick", update)
-      .force("link", d3.forceLink().id((d) => {return d.name;}));
-
-    // graph.nodes.forEach((d) => {
-    //   d.x = Math.random() * width;
-    //   d.y = Math.random() * height;
-    // });
-    simulation.nodes(graph.nodes);
-    simulation.force("link")
-      .links(graph.links);
-
-    canvas.call(d3.drag()
-      .container(canvas.node())
-      .subject(dragsubject)
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended));
-
-    function dragsubject () {
-      return simulation.find(d3.event.x, d3.event.y);
-    }
-
-    function update () {
-      ctx.clearRect(0, 0, width, height);
-
-      ctx.beginPath();
-      ctx.globalAlpha = 3;
-      ctx.strokeStyle = "#aaa";
-      graph.links.forEach(drawLink);
-      ctx.stroke();
-
-
-      ctx.globalAlpha = 1;
-      graph.nodes.forEach(drawNode);
-    }
-
-    function drawNode (d) {
-      ctx.beginPath();
-      ctx.fillStyle = color(d.party);
-      ctx.moveTo(d.x, d.y);
-      ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    function drawLink (d) {
-      ctx.moveTo(d.source.x, d.source.y);
-      ctx.lineTo(d.target.x, d.target.y);
-    }
-
-    function dragstarted () {
-      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-      d3.event.subject.fx = d3.event.subject.x;
-      d3.event.subject.fy = d3.event.subject.y;
-    }
-
-    function dragged () {
-      d3.event.subject.fx = d3.event.x;
-      d3.event.subject.fy = d3.event.y;
-    }
-
-    function dragended () {
-      if (!d3.event.active) simulation.alphaTarget(0);
-      d3.event.subject.fx = null;
-      d3.event.subject.fy = null;
-    }
-    update();
+    this.getDistance = this.getDistance.bind(this);
   }
 
   componentWillUpdate () {
@@ -119,10 +22,37 @@ export default class Visualizacion extends Component {
     //   { month: "Q3-2016", apples: 640 },
     //   { month: "Q4-2016", apples: 320 }
     // ];
-
     var collection = this.props.collection;
-
     if (collection.length > 0) {
+      var data = collection[0].vehicle;
+      var nestedBuses = d3.nest().key((d) => d.routeTag).entries(data);
+      // console.log(nestedBuses);
+      var keys = [];
+      for (const [key, value] of Object.entries(nestedBuses)) {
+        keys.push(key);
+        var arrayLength = value.values.length;
+        if (arrayLength === 1) {
+          var objt = value.values[0];
+          obj["distance"] = 0;
+        }
+        for (var i = 1; i < arrayLength; i++) {
+          var obj = value.values[i - 1];
+          var obj2 = value.values[i];
+          obj["distance"] = this.getDistance(obj.lat, obj.lon, obj2.lat, obj2.lon);
+        }
+      }
+      console.log(nestedBuses);
+
+      // var stackedBuses = d3.stack()
+      //   .keys(keys)
+      //   .value((d, key) => {
+      //     return key < d.values.length ? d.values[key].distance : 0;
+      //   })(stackedBuses);
+    }
+
+
+    var d = 1;
+    if (d === 3) {
       var data = collection[0].vehicle;
       var series = d3.stack()
         .keys(["speedKmHr"])
@@ -179,27 +109,35 @@ export default class Visualizacion extends Component {
     }
   }
 
+  getDistance (lat1, lon1, lat2, lon2) {
+    function deg2rad (deg) {
+      return deg * (Math.PI / 180);
+    }
+
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1); // deg2rad below
+    var dLon = deg2rad(lon2 - lon1);
+    var a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2)
+      ;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
+  }
 
   render () {
     return (
       <div className="visualizacion">
         <Row>
-          <Col sm="4" className="centered">
-            <canvas
-              width="400"
-              height="400"
-              ref = {(canvas) => {this.canvas = canvas; return this.canvas; }}>
-              vizualizacion de force
-            </canvas>
-          </Col>
           <Col sm="8" className="centered">
             <svg
               width="600"
               height="400"
               ref = {(svg) => {this.svg = svg; return this.svg; }}>
-              vizualizacion de force
+              vizualizacion distances of  buses
             </svg>
-
             {this.vgg()}
           </Col>
         </Row>

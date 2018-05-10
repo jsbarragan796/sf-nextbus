@@ -4,7 +4,7 @@
 # Nextbus
 
 ## Description
-This is a web application for Xkajshdfkljahsdlkfjhaslkdjfhaklsdf
+This is a web application to help to know what is the distances of the is the closest buses of the city of San Francisco.
 
 This app uses:
 * React.
