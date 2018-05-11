@@ -35,6 +35,7 @@ class App extends Component {
     this.handleChangeQuery = this.handleChangeQuery.bind(this);
     this.makeQuery = this.makeQuery.bind(this);
     this.update = this.update.bind(this);
+    this.toggle = this.toggle.bind(this);
   }
 
   toggle () {

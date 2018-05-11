@@ -113,7 +113,6 @@ export default class Visualizacion extends Component {
       .enter().append("g")
       .attr("transform", (d, i) => { return "translate(-50," + i * 20 + ")"; });
 
-    legend.exit().remove();
     legend.append("rect")
       .attr("x", this.width - 19)
       .attr("width", 19)
