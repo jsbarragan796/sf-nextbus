@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import * as d3 from "d3";
+import * as d3Chromatic from "d3-scale-chromatic";
 import { Row, Col } from "reactstrap";
 
 export default class Visualizacion extends Component {
@@ -8,6 +9,10 @@ export default class Visualizacion extends Component {
     super(props);
     this.state = {
     };
+    this.height = 600;
+    this.width = 1500;
+    this.margin = { top: 20, right: 50, bottom: 30, left: 40 };
+    this.maxNumBuses = 23;
     this.getDistance = this.getDistance.bind(this);
   }
 
@@ -16,97 +21,115 @@ export default class Visualizacion extends Component {
   }
 
   vgg () {
-    // var data = [
-    //   { month: "Q1-2016", apples: 3840 },
-    //   { month: "Q2-2016", apples: 1600 },
-    //   { month: "Q3-2016", apples: 640 },
-    //   { month: "Q4-2016", apples: 320 }
-    // ];
     var collection = this.props.collection;
+    var data = [];
     if (collection.length > 0) {
-      var data = collection[0].vehicle;
+      data = collection[0].vehicle;
       var nestedBuses = d3.nest().key((d) => d.routeTag).entries(data);
-      // console.log(nestedBuses);
       var keys = [];
-      for (const [key, value] of Object.entries(nestedBuses)) {
-        keys.push(key);
-        var arrayLength = value.values.length;
+      for (const [key, values] of Object.entries(nestedBuses)) {
+        keys[key] = key;
+        var arrayLength = values.values.length;
         if (arrayLength === 1) {
-          var objt = value.values[0];
-          obj["distance"] = 0;
+          var objt = values.values[0];
+          objt["distance"] = 0;
         }
         for (var i = 1; i < arrayLength; i++) {
-          var obj = value.values[i - 1];
-          var obj2 = value.values[i];
+          var obj = values.values[i - 1];
+          var obj2 = values.values[i];
           obj["distance"] = this.getDistance(obj.lat, obj.lon, obj2.lat, obj2.lon);
         }
       }
-      console.log(nestedBuses);
+      // console.log(keys);
 
-      // var stackedBuses = d3.stack()
-      //   .keys(keys)
-      //   .value((d, key) => {
-      //     return key < d.values.length ? d.values[key].distance : 0;
-      //   })(stackedBuses);
+      var stackedBuses = d3.stack()
+        .keys(keys)
+        .value((d, key) => {
+          return key < d.values.length ? d.values[key].distance : 0;
+        })(nestedBuses);
+
+      console.log(stackedBuses);
+      var getSVG = this.getSVG(nestedBuses, stackedBuses, keys);
     }
+  }
 
+  getSVG (nestedBuses, stackedBuses, keys) {
+    const svg = d3.select(this.svg);
+    this.g = svg.append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
-    var d = 1;
-    if (d === 3) {
-      var data = collection[0].vehicle;
-      var series = d3.stack()
-        .keys(["speedKmHr"])
-        .offset(d3.stackOffsetDiverging)(data);
+    this.x = d3.scaleBand()
+      .rangeRound([0, this.width - this.margin.left - this.margin.right])
+      .paddingInner(8)
+      .align(0.1);
 
-      var svg = d3.select(this.svg);
-      var margin = { top: 20, right: 30, bottom: 30, left: 60 };
-      var width = +svg.attr("width");
-      var height = +svg.attr("height");
+    this.y = d3.scaleLinear()
+      .rangeRound([this.height - this.margin.top - this.margin.bottom, 0]);
 
-      var x = d3.scaleBand()
-        .domain(data.map(function (d) { return d.id; }))
-        .rangeRound([margin.left, width - margin.right])
-        .padding(0.1);
+    this.z = d3.scaleSequential(d3Chromatic.interpolateBlues);
 
-      var y = d3.scaleLinear()
-        .domain([d3.min(series, stackMin), d3.max(series, stackMax)])
-        .rangeRound([height - margin.bottom, margin.top]);
+    this.x.domain(nestedBuses.map((d) => { return d.key; }));
+    this.y.domain([0, d3.max(nestedBuses, (d) => { return d.total; })]).nice();
+    this.z.domain([0, this.maxNumBuses]);
 
-      var z = d3.scaleOrdinal(d3.schemeCategory10);
+    this.g.append("g")
+      .selectAll("g")
+      .data(stackedBuses)
+      .enter().append("g")
+      .attr("fill", (d) => { return this.z(d.key); })
+      .attr("stroke", "white")
+      .selectAll("rect")
+      .data((d) => { return d; })
+      .enter().append("rect")
+      .attr("x", (d) => { return this.x(d.data.key); })
+      .attr("y", (d) => {
+        // console.log(d);
+        return 5;
+      })
+      .attr("height", (d) => {
+        // console.log(d);
+        return 90;
+      })
+      .attr("width", this.x.bandwidth());
 
-      svg.append("g")
-        .selectAll("g")
-        .data(series)
-        .attr("fill", function (d) { return z(d.key); })
-        .enter().append("g")
-        .attr("fill", function (d) { return z(d.key); })
-        .selectAll("rect")
-        .data(function (d) { return d; })
-        .enter().append("rect")
-        .attr("width", x.bandwidth)
-        .attr("x", function (d) { return x(d.data.id); })
-        .attr("y", function (d) { return y(d[1]); })
-        .attr("height", function (d) { return y(d[0]) - y(d[1]); });
+    this.g.append("g")
+      .attr("class", "axis")
+      .attr("transform", "translate(0," + (this.height - this.margin.top - this.margin.bottom) + ")")
+      .call(d3.axisBottom(this.x));
 
+    this.g.append("g")
+      .attr("class", "axis")
+      .call(d3.axisLeft(this.y).ticks(null, "s"))
+      .append("text")
+      .attr("x", 2)
+      .attr("y", 3)
+      .attr("dy", "0.32em")
+      .attr("fill", "#000")
+      .attr("font-weight", "bold")
+      .attr("text-anchor", "start")
+      .text("Added distance");
+    // this.y(this.y.ticks().pop()) + 0.5
+    this.legend = this.g.append("g")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 10)
+      .attr("text-anchor", "end")
+      .selectAll("g")
+      .data(keys.slice().reverse())
+      .enter().append("g")
+      .attr("transform", (d, i) => { return "translate(-50," + i * 20 + ")"; });
 
-      svg.append("g")
-        .attr("transform", "translate(0," + y(0) + ")")
-        .call(d3.axisBottom(x));
+    this.legend.append("rect")
+      .attr("x", this.width - 19)
+      .attr("width", 19)
+      .attr("height", 19)
+      .attr("fill", this.z);
 
-      svg.append("g")
-        .attr("transform", "translate(" + margin.left + ",0)")
-        .call(d3.axisLeft(y));
+    this.legend.append("text")
+      .attr("x", this.width - 24)
+      .attr("y", 9.5)
+      .attr("dy", "0.32em")
+      .text((d) => { return d; });
 
-      svg.exit().remove();
-    }
-
-    function stackMin (serie) {
-      return d3.min(serie, function (d) { return d[0]; });
-    }
-
-    function stackMax (serie) {
-      return d3.max(serie, function (d) { return d[1]; });
-    }
+    return svg.node();
   }
 
   getDistance (lat1, lon1, lat2, lon2) {
@@ -131,10 +154,10 @@ export default class Visualizacion extends Component {
     return (
       <div className="visualizacion">
         <Row>
-          <Col sm="8" className="centered">
+          <Col sm="12" className="centered">
             <svg
-              width="600"
-              height="400"
+              width={this.width}
+              height={this.height}
               ref = {(svg) => {this.svg = svg; return this.svg; }}>
               vizualizacion distances of  buses
             </svg>
