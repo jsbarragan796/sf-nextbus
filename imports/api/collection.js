@@ -21,9 +21,13 @@ if (Meteor.isServer) {
     "bus.update" () {
       console.log("Query search: ");
       try {
+        Collection.remove({});
         const result = HTTP.call("GET",
           "http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni&t=1525923010278"
         );
+        // const result = HTTP.call("GET",
+        //   "http://localhost:3000/data.json"
+        // );
         Collection.insert(result.data);
       } catch (e) {
       // Got a network error, timeout, or HTTP error in the 400 or 500 range.
