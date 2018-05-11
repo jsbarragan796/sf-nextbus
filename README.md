@@ -1,5 +1,9 @@
 
-<img src="https://raw.githubusercontent.com/jsbarragan796/sf-nextbus/master/public/logo.png" title="Next bus" alt="Next bus logo" href="https://sf-nextbus.herokuapp.com" height = 200px>
+
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/jsbarragan796/sf-nextbus/master/public/logo.png" title="Next bus" alt="Next bus logo" href="https://sf-nextbus.herokuapp.com" height = 200vw>
+</p>
 
 # Nextbus
 
