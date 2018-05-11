@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import AccountsUIWrapper from "./AccountsUIWrapper.js";
 import { withTracker } from "meteor/react-meteor-data";
 import { Meteor } from "meteor/meteor";
 import { Collection } from "../api/collection.js";
@@ -14,18 +15,32 @@ import { Jumbotron,
   InputGroupAddon,
   Button,
   Row,
-  Col
+  Col,
+  Navbar,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink,
+  NavbarToggler,
+  Collapse
 } from "reactstrap";
 
 class App extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      queryInput: ""
+      queryInput: "",
+      isOpen: ""
     };
     this.handleChangeQuery = this.handleChangeQuery.bind(this);
     this.makeQuery = this.makeQuery.bind(this);
     this.update = this.update.bind(this);
+  }
+
+  toggle () {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
   }
 
   handleChangeQuery (event) {
@@ -67,8 +82,25 @@ class App extends Component {
 
   render () {
     console.log("render!");
+    const usuario = this.props.usuario ? "Hola, " : "Realiza ";
     return (
       <div>
+        <Navbar color="faded" light expand="md">
+          <NavbarBrand role="listitem">
+            <img src="/logo.png" height="50" alt="Logo NextBus"/>
+          </NavbarBrand>
+          <NavbarToggler onClick={this.toggle} />
+          <Collapse isOpen={this.state.isOpen} navbar>
+            <Nav className="ml-auto" navbar>
+              <NavItem>
+                <NavLink >
+                  {usuario}
+                  <AccountsUIWrapper />
+                </NavLink>
+              </NavItem>
+            </Nav>
+          </Collapse>
+        </Navbar>
         <Jumbotron fluid>
           <Container fluid>
             <Row>
@@ -98,7 +130,13 @@ App.propTypes = {
 };
 export default withTracker(() => {
   Meteor.subscribe("collection");
+  let user = Meteor.user();
+  if ((user !== null && typeof user !== "undefined") &&
+  (user.profile !== null && typeof user.profile !== "undefined")) {
+    user.username = user.profile.name;
+  }
   return {
+    usuario: user,
     collection: Collection.find({}).fetch()
   };
 })(App);

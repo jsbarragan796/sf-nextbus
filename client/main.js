@@ -3,7 +3,7 @@ import React from "react";
 import App from "../imports/ui/App.js";
 import { Meteor } from "meteor/meteor";
 import { render } from "react-dom";
-
+import "../imports/startup/accounts-config.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 

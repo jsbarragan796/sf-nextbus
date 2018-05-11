@@ -29,21 +29,6 @@ export default class Visualizacion extends Component {
 
       var keys = d3.range(this.maxNumBuses);
 
-      // for (const dic of nestedBuses) {
-      //   var arrayLength = dic.values.length;
-      //   if (arrayLength === 1) {
-      //     var objt = dic.values[0];
-      //     objt["distance"] = 0;
-      //   }
-      //   var total = 0;
-      //   for (var i = 1; i < arrayLength; i++) {
-      //     var obj = dic.values[i - 1];
-      //     var obj2 = dic.values[i];
-      //     obj["distance"] = this.getDistance(obj.lat, obj.lon, obj2.lat, obj2.lon);
-      //     total += obj.distance;
-      //   }
-      //   dic["total"] = total;
-      // }
       for (let route of nestedBuses) {
         route.total = 0;
         route.values[0].distance = 0;
@@ -54,9 +39,7 @@ export default class Visualizacion extends Component {
         }
       }
 
-
       nestedBuses.sort(function (a, b) { return b.total - a.total; });
-
 
       var stackedBuses = d3.stack()
         .keys(keys)
@@ -102,6 +85,8 @@ export default class Visualizacion extends Component {
       .attr("height", (d) => { return this.y(d[0]) - this.y(d[1]); })
       .attr("width", this.x.bandwidth());
 
+    this.g.exit().remove();
+
     this.g.append("g")
       .attr("class", "axis")
       .attr("transform", "translate(0," + (this.height - this.margin.top - this.margin.bottom) + ")")
@@ -128,6 +113,7 @@ export default class Visualizacion extends Component {
       .enter().append("g")
       .attr("transform", (d, i) => { return "translate(-50," + i * 20 + ")"; });
 
+    legend.exit().remove();
     legend.append("rect")
       .attr("x", this.width - 19)
       .attr("width", 19)
