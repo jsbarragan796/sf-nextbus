@@ -4,6 +4,7 @@ import AccountsUIWrapper from "./AccountsUIWrapper.js";
 import { withTracker } from "meteor/react-meteor-data";
 import { Meteor } from "meteor/meteor";
 import { Collection } from "../api/collection.js";
+import { Comentarios } from "../api/comentarios.js";
 import Visualizacion from "./Visualizacion.js";
 import { Jumbotron,
   Container,
@@ -110,8 +111,8 @@ class App extends Component {
               </Col>
               <Col sm="8">
                 <h1 className="display-3">NextBus</h1>
-                <p className="lead">This is a modified jumbotron that occupies the
-                entire horizontal space of its parent.</p>
+                <p className="lead">Wondering how far buses of a route in San fransisco are apart from each  other? </p>
+                <p className="lead">Wonder no more also you can read an make comments of a route.</p>
               </Col>
             </Row>
 
@@ -128,10 +129,12 @@ class App extends Component {
 //prop types for App
 App.propTypes = {
   collection: PropTypes.array.isRequired,
+  comentarios: PropTypes.array.isRequired,
   usuario: PropTypes.object
 };
 export default withTracker(() => {
   Meteor.subscribe("collection");
+  Meteor.subscribe("comentarios");
   let user = Meteor.user();
   if ((user !== null && typeof user !== "undefined") &&
   (user.profile !== null && typeof user.profile !== "undefined")) {
@@ -139,6 +142,7 @@ export default withTracker(() => {
   }
   return {
     usuario: user,
-    collection: Collection.find({}).fetch()
+    collection: Collection.find({}).fetch(),
+    comentarios: Comentarios.find({}).fetch()
   };
 })(App);
