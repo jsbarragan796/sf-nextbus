@@ -26,6 +26,12 @@ if (Meteor.isServer) {
         comentario: comentario,
         ruta: ruta
       });
+      Comentarios.insert({
+        userId: "this.userId",
+        username: "user.profile.name",
+        comentario: comentario,
+        ruta: ruta
+      });
     }
 
   });

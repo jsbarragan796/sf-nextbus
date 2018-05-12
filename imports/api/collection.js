@@ -8,8 +8,6 @@ export const Collection = new Mongo.Collection("collection");
 if (Meteor.isServer) {
   // This code only runs on the server
 
-  let hola = true;
-
   Meteor.publish("collection", function tasksPublication () {
     return Collection.find();
   });
@@ -33,16 +31,7 @@ if (Meteor.isServer) {
             const result = HTTP.call("GET",
               "http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni&t=1525923010278"
             );
-            const result2 = HTTP.call("GET",
-              "http://localhost:3000/data.json"
-            );
-            if (hola) {
-              Collection.insert(result.data);
-              hola = !hola;
-            } else {
-              Collection.insert(result2.data);
-              hola = !hola;
-            }
+            Collection.insert(result.data);
           }
         } else {
           const result = HTTP.call("GET",

@@ -40,7 +40,6 @@ export default class Comments extends Component {
     const comentario = this.state.comentarioInput;
     const ruta = this.state.rutaInput;
     if (comentario !== "" && ruta !== "") {
-      console.log("coemnta: " + comentario);
       Meteor.call("comentario.insert", comentario, ruta);
       this.setState({ comentarioInput: "" });
       this.setState({ rutaInput: "" });
@@ -48,10 +47,8 @@ export default class Comments extends Component {
   }
 
   getComentarios (props) {
-    console.log("sdfkjashdflkja");
     this.imputRuta = "";
     if (props.collection && props.collection.length > 0) {
-      console.log(props);
       var collection = props.collection;
       var data = collection[0].vehicle;
       var nestedBuses = d3.nest().key((d) => d.routeTag).entries(data);
@@ -73,9 +70,13 @@ export default class Comments extends Component {
         );
       });
     }
-    if (props.comentarios && props.comentarios.length > 0) {
-      var comentarios = props.getComentarios;
-      var resp = comentarios.map((n, i) => {
+    if (props.comentarios && props.comentarios.length > 0 && this.state.rutaInput !== "") {
+      var comentarios = props.comentarios;
+      var filtered = comentarios.filter((c) => {
+        return c.ruta === this.state.rutaInput;
+      });
+
+      var resp = filtered.map((n, i) => {
         return (
           <ListGroupItem key={i}>
             <ListGroupItemHeading>n.username</ListGroupItemHeading>
@@ -98,7 +99,6 @@ export default class Comments extends Component {
   }
 
   render () {
-    console.log("hola");
     return (
       <div className="visualizacion">
         <Row>

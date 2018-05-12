@@ -9,13 +9,6 @@ import Visualizacion from "./Visualizacion.js";
 import Comments from "./comments.js";
 import { Jumbotron,
   Container,
-  Form,
-  FormGroup,
-  InputGroup,
-  Input,
-  Label,
-  InputGroupAddon,
-  Button,
   Row,
   Col,
   Navbar,
@@ -61,50 +54,25 @@ class App extends Component {
     event.preventDefault();
     const query = this.state.queryInput;
     if (query !== "") {
-      console.log("Query: " + query);
       Meteor.call("bus.query", query);
     }
   }
   update () {
     setInterval(() => {
       Meteor.call("bus.update");
-      console.log("asking");
     }, 10000);
   }
 
-  searchBar () {
-    return (
-      <Form className="new-task" onSubmit={this.makeQuery} >
-        <FormGroup>
-          <Label for="query">Mensaje a enviar: </Label>
-          <InputGroup>
-            <Input
-              id="query"
-              type="text"
-              value = {this.state.queryInput}
-              onChange={this.handleChangeQuery}
-              placeholder="insert query"
-            />
-            <InputGroupAddon addonType="append">
-              <Button color="secondary">Enviar</Button>
-              <Button onClick={this.update} color="danger">Update</Button>
-            </InputGroupAddon>
-          </InputGroup>
-        </FormGroup>
-      </Form>);
-  }
 
   render () {
     console.log("render!");
     const usuario = this.props.usuario ? "Hi, " : "";
 
-    // const cometarios2 = this.state.enHome && this.props.usuario ? (
-    //   <Comments comentarios={this.props.comentarios} collection={this.props.collection}/>
-    // ) : (<div>{ }</div>);
     const cometarios2 = this.state.enHome && this.props.usuario ? (
       <Comments comentarios={this.props.comentarios} collection={this.props.collection}/>
-    ) : (<Comments comentarios={this.props.comentarios} collection={this.props.collection}/>);
-    // this.update();
+    ) : (<div>{ }</div>);
+
+    this.update();
     return (
       <div>
         <Navbar color="faded" light expand="md">
@@ -139,7 +107,6 @@ class App extends Component {
           </Container>
         </Jumbotron>
         <div className="contenido">
-          {this.searchBar()}
           <Visualizacion collection={this.props.collection} />
           {cometarios2}
         </div>
