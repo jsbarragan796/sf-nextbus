@@ -68,7 +68,7 @@ class App extends Component {
     console.log("render!");
     const usuario = this.props.usuario ? "Hi, " : "";
 
-    const cometarios2 = this.state.enHome && this.props.usuario ? (
+    const cometarios2 = this.props.usuario ? (
       <Comments comentarios={this.props.comentarios} collection={this.props.collection} usuario={this.props.usuario}/>
     ) : (<div>{ }</div>);
 
