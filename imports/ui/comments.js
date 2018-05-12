@@ -39,8 +39,9 @@ export default class Comments extends Component {
     event.preventDefault();
     const comentario = this.state.comentarioInput;
     const ruta = this.state.rutaInput;
+    const nombre = this.props.usuario.username;
     if (comentario !== "" && ruta !== "") {
-      Meteor.call("comentario.insert", comentario, ruta);
+      Meteor.call("comentario.insert", comentario, ruta, nombre);
       this.setState({ comentarioInput: "" });
       this.setState({ rutaInput: "" });
     }
@@ -145,5 +146,6 @@ export default class Comments extends Component {
 //Props del Home
 Comments.propTypes = {
   comentarios: PropTypes.array.isRequired,
-  collection: PropTypes.array.isRequired
+  collection: PropTypes.array.isRequired,
+  usuario: PropTypes.object
 };

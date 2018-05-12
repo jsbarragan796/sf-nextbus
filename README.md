@@ -8,7 +8,7 @@
 # Nextbus
 
 ## Description
-This is a web application to help to know what is the distances of the is the closest buses of the city of San Francisco.
+This is a web application to help to know what is the distances between  buses of the same route in the city of San Francisco.
 
 This app uses:
 * React.
@@ -33,4 +33,10 @@ First clone or download this repository on your computer, open your terminal go 
 * ```meteor npm install```or: ```npm install```
 * ```meteor```
 
-Now you only need to open your browser and type on the address bar  ```localhost:3000``` now the project is running locally.
+Now you only need to open your browser and type on the address bar  ```localhost:3000``` now the project is running locally. The login
+can only setup on the environment of deployment
+
+## Note
+I check that things send by the user are what are suppose to sent.
+Only in the back the the buses are ask. Even if there are many users only every 10  seconds the server make the request to NextBus,
+When there are no users no requests are made. 

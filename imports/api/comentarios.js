@@ -13,22 +13,15 @@ if (Meteor.isServer) {
 
   // This method will trigger the streamer
   Meteor.methods({
-    "comentario.insert" (comentario, ruta) {
+    "comentario.insert" (comentario, ruta, username) {
       check(comentario, String);
       check(ruta, String);
       if (!this.userId) {
         throw new Meteor.Error("not-authorized");
       }
-      let user = Meteor.user();
       Comentarios.insert({
         userId: this.userId,
-        username: user.profile.name,
-        comentario: comentario,
-        ruta: ruta
-      });
-      Comentarios.insert({
-        userId: "this.userId",
-        username: "user.profile.name",
+        username: username,
         comentario: comentario,
         ruta: ruta
       });
