@@ -6,6 +6,7 @@ import { Meteor } from "meteor/meteor";
 import { Collection } from "../api/collection.js";
 import { Comentarios } from "../api/comentarios.js";
 import Visualizacion from "./Visualizacion.js";
+import Comments from "./comments.js";
 import { Jumbotron,
   Container,
   Form,
@@ -31,12 +32,20 @@ class App extends Component {
     super(props);
     this.state = {
       queryInput: "",
-      isOpen: false
+      isOpen: false,
+      rutas: []
     };
     this.handleChangeQuery = this.handleChangeQuery.bind(this);
     this.makeQuery = this.makeQuery.bind(this);
     this.update = this.update.bind(this);
     this.toggle = this.toggle.bind(this);
+    this.setRutasList = this.setRutasList.bind(this);
+  }
+
+  setRutasList (list) {
+    this.setState({
+      rutas: list
+    });
   }
 
   toggle () {
@@ -88,7 +97,11 @@ class App extends Component {
   render () {
     console.log("render!");
     const usuario = this.props.usuario ? "Hi, " : "";
-    this.update();
+
+    const cometarios2 = this.state.enHome && this.props.usuario ? (
+      <Comments comentarios={this.props.comentarios} collection={this.props.collection}/>
+    ) : (<div>{ }</div>);
+    // this.update();
     return (
       <div>
         <Navbar color="faded" light expand="md">
@@ -125,6 +138,7 @@ class App extends Component {
         <div className="contenido">
           {this.searchBar()}
           <Visualizacion collection={this.props.collection} />
+          {cometarios2}
         </div>
       </div>
     );

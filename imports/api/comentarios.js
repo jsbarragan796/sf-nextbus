@@ -13,11 +13,6 @@ if (Meteor.isServer) {
 
   // This method will trigger the streamer
   Meteor.methods({
-    "bus.query" (query) {
-      check(query, String);
-      check(query !== "", true);
-      console.log("Query search: " + query);
-    },
     "comentario.insert" (comentario, ruta) {
       check(comentario, String);
       check(ruta, String);
@@ -27,7 +22,8 @@ if (Meteor.isServer) {
       let user = Meteor.user();
       Comentarios.insert({
         userId: this.userId,
-        username1: user.profile.name,
+        username: user.profile.name,
+        comentario: comentario,
         ruta: ruta
       });
     }

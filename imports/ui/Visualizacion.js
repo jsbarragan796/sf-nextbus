@@ -66,7 +66,6 @@ export default class Visualizacion extends Component {
     var data = [];
 
     if (props.collection && props.collection.length > 0) {
-      console.log(props);
       var collection = props.collection;
       data = collection[0].vehicle;
       var nestedBuses = d3.nest().key((d) => d.routeTag).entries(data);
@@ -85,18 +84,18 @@ export default class Visualizacion extends Component {
 
       nestedBuses.sort(function (a, b) { return b.total - a.total; });
 
+
       var stackedBuses = d3.stack()
         .keys(keys)
         .value((d, key) => {
           return key < d.values.length ? d.values[key].distance : 0;
         })(nestedBuses);
-      console.log(nestedBuses);
-      console.log(stackedBuses);
 
       this.x.domain(nestedBuses.map((d) => { return d.key; }));
       this.y.domain([0, d3.max(nestedBuses, (d) => { return d.total; })]).nice();
       this.z.domain([0, this.maxNumBuses]);
-
+      var list = stackedBuses.map((d) => { return d.key; });
+      console.log(list);
 
       this.g.select(".bars").remove();
 
