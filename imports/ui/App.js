@@ -30,7 +30,7 @@ class App extends Component {
     super(props);
     this.state = {
       queryInput: "",
-      isOpen: ""
+      isOpen: false
     };
     this.handleChangeQuery = this.handleChangeQuery.bind(this);
     this.makeQuery = this.makeQuery.bind(this);
@@ -83,7 +83,7 @@ class App extends Component {
 
   render () {
     console.log("render!");
-    const usuario = this.props.usuario ? "Hola, " : "Realiza ";
+    const usuario = this.props.usuario ? "Hi, " : "";
     return (
       <div>
         <Navbar color="faded" light expand="md">
@@ -127,7 +127,8 @@ class App extends Component {
 }
 //prop types for App
 App.propTypes = {
-  collection: PropTypes.array.isRequired
+  collection: PropTypes.array.isRequired,
+  usuario: PropTypes.object
 };
 export default withTracker(() => {
   Meteor.subscribe("collection");
