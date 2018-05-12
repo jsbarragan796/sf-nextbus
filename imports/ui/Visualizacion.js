@@ -94,8 +94,6 @@ export default class Visualizacion extends Component {
       this.x.domain(nestedBuses.map((d) => { return d.key; }));
       this.y.domain([0, d3.max(nestedBuses, (d) => { return d.total; })]).nice();
       this.z.domain([0, this.maxNumBuses]);
-      var list = stackedBuses.map((d) => { return d.key; });
-      console.log(list);
 
       this.g.select(".bars").remove();
 
