@@ -4,7 +4,7 @@ import { Meteor } from "meteor/meteor";
 import * as d3 from "d3";
 import { Row, Col, ListGroup, ListGroupItem,
   ListGroupItemHeading, ListGroupItemText,
-  InputGroup, InputGroupAddon, Button, Input } from "reactstrap";
+  InputGroup, InputGroupAddon, Button, Input, Label } from "reactstrap";
 
 export default class Comments extends Component {
   constructor (props) {
@@ -15,8 +15,8 @@ export default class Comments extends Component {
     };
 
     this.handleChangecomentario = this.handleChangecomentario.bind(this);
-    this.handleChangeRuta = this.handleChangecomentario.bind(this);
-    this.makecomentario = this.handleChangecomentario.bind(this);
+    this.handleChangeRuta = this.handleChangeRuta.bind(this);
+    this.makecomentario = this.makecomentario.bind(this);
   }
 
   componentDidMount () {
@@ -34,17 +34,16 @@ export default class Comments extends Component {
     this.setState({ rutaInput: event.target.value });
   }
 
-  setRutasList (list) {
-    this.setState({ rutaLista: list });
-  }
 
   makecomentario (event) {
     event.preventDefault();
     const comentario = this.state.comentarioInput;
     const ruta = this.state.rutaInput;
-    if (comentario !== "") {
+    if (comentario !== "" && ruta !== "") {
       console.log("coemnta: " + comentario);
       Meteor.call("comentario.insert", comentario, ruta);
+      this.setState({ comentarioInput: "" });
+      this.setState({ rutaInput: "" });
     }
   }
 
@@ -66,10 +65,11 @@ export default class Comments extends Component {
         .value((d, key) => {
           return key < d.values.length ? d.values[key].distance : 0;
         })(nestedBuses);
+
       this.list = nestedBuses.map((d) => { return d.key; });
       this.imputRuta = this.list.map((d, i) => {
         return (
-          <option key={i}>d</option>
+          <option key={i}>{d}</option>
         );
       });
     }
@@ -107,15 +107,18 @@ export default class Comments extends Component {
           </Col>
           <Col sm="6">
             <div className="">
-              <Input
-                type="select"
-                name="select"
-                id="exampleSelect"
-                value = {this.state.rutaInput}
-                onChange={this.handleChangeRuta}
-              >
-                {this.imputRuta}
-              </Input>
+              <InputGroup>
+                <Label for="exampleSelect">Select a route to comment</Label>
+                <Input
+                  type="select"
+                  name="select"
+                  id="exampleSelect"
+                  value = {this.state.rutaInput}
+                  onChange={this.handleChangeRuta}
+                >
+                  {this.imputRuta}
+                </Input>
+              </InputGroup>
 
               <ListGroup>
                 {this.getComentarios(this.props)}

@@ -98,9 +98,12 @@ class App extends Component {
     console.log("render!");
     const usuario = this.props.usuario ? "Hi, " : "";
 
+    // const cometarios2 = this.state.enHome && this.props.usuario ? (
+    //   <Comments comentarios={this.props.comentarios} collection={this.props.collection}/>
+    // ) : (<div>{ }</div>);
     const cometarios2 = this.state.enHome && this.props.usuario ? (
       <Comments comentarios={this.props.comentarios} collection={this.props.collection}/>
-    ) : (<div>{ }</div>);
+    ) : (<Comments comentarios={this.props.comentarios} collection={this.props.collection}/>);
     // this.update();
     return (
       <div>
