@@ -57,7 +57,10 @@ class App extends Component {
     }
   }
   update () {
-    Meteor.call("bus.update");
+    setInterval(() => {
+      Meteor.call("bus.update");
+      console.log("asking");
+    }, 10000);
   }
 
   searchBar () {
@@ -85,6 +88,7 @@ class App extends Component {
   render () {
     console.log("render!");
     const usuario = this.props.usuario ? "Hi, " : "";
+    this.update();
     return (
       <div>
         <Navbar color="faded" light expand="md">

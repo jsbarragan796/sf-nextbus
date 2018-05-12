@@ -22,15 +22,14 @@ if (Meteor.isServer) {
       console.log("Query search: " + query);
     },
     "bus.update" () {
-      console.log("Query search: ");
       try {
         var all = Collection.find({}).fetch();
         if (all.length > 0) {
           var time = all[0].lastTime.time;
           var milliseconds = (new Date()).getTime();
-          console.log(milliseconds - time);
           if (milliseconds - time > 10000) {
             Collection.remove({});
+            console.log("updated");
             const result = HTTP.call("GET",
               "http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni&t=1525923010278"
             );
@@ -45,6 +44,11 @@ if (Meteor.isServer) {
               hola = !hola;
             }
           }
+        } else {
+          const result = HTTP.call("GET",
+            "http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni&t=1525923010278"
+          );
+          Collection.insert(result.data);
         }
       } catch (e) {
       // Got a network error, timeout, or HTTP error in the 400 or 500 range.

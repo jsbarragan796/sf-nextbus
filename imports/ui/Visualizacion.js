@@ -44,7 +44,19 @@ export default class Visualizacion extends Component {
       .attr("transform", "translate(0," + (this.height - this.margin.top - this.margin.bottom) + ")");
 
     this.g.append("g")
-      .attr("class", "axis-y");
+      .attr("class", "axis-y")
+      .attr("dy", "0.32em")
+      .attr("fill", "#000")
+      .attr("font-weight", "bold")
+      .attr("text-anchor", "start")
+      .text("Added distance");
+
+
+    this.legend = this.g.append("g")
+      .attr("class", "axis-z")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 10)
+      .attr("text-anchor", "end");
 
 
     this.svgUpdate(this.props);
@@ -123,35 +135,37 @@ export default class Visualizacion extends Component {
         .append("text")
         .attr("x", 2)
         .attr("y", this.y(this.y.ticks().pop()) + 0.5)
-        .attr("dy", "0.32em")
-        .attr("fill", "#000")
-        .attr("font-weight", "bold")
-        .attr("text-anchor", "start")
         .text("Added distance");
+
 
       yUpdate.exit()
         .remove();
 
 
-      var legend = this.g.append("g")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", 10)
-        .attr("text-anchor", "end")
+      const z = this.g.select(".axis-z")
         .selectAll("g")
-        .data(keys.slice().reverse())
-        .enter().append("g")
+        .data(keys.slice().reverse());
+
+      const EnterZ = z.enter().append("g")
         .attr("transform", (d, i) => { return "translate(-50," + i * 20 + ")"; });
 
-      legend.append("rect")
+      EnterZ.append("rect")
         .attr("x", this.width - 19)
         .attr("width", 19)
         .attr("height", 19)
         .attr("fill", this.z);
 
-      legend.append("text")
+      EnterZ.append("text")
         .attr("x", this.width - 24)
         .attr("y", 9.5)
         .attr("dy", "0.32em")
+        .text((d) => { return d; });
+
+      z.select("rect")
+        .attr("x", this.width - 19)
+        .attr("fill", this.z);
+
+      z.select("text")
         .text((d) => { return d; });
     }
   }
