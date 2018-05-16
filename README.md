@@ -36,7 +36,8 @@ First clone or download this repository on your computer, open your terminal go 
 Now you only need to open your browser and type on the address bar  ```localhost:3000``` now the project is running locally. The login
 can only setup on the environment of deployment
 
-## Note
-I check that things send by the user are what are suppose to sent.
-Only in the back the the buses are ask. Even if there are many users only every 10  seconds the server make the request to NextBus,
+## Creative addition
+* I check that things send by the user are what are suppose to sent.
+
+* Only in the back the the buses are ask. Even if there are many users only every 10  seconds the server make the request to NextBus,
 When there are no users no requests are made. 
